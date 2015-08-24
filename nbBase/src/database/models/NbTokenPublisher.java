@@ -26,13 +26,13 @@ public class NbTokenPublisher implements Serializable, nbBaseModel {
 	@Column(unique=true, nullable=false)
 	private int id;
 
-	@Column(name="applicationId", nullable=false, length=32)
+	@Column(name="applicationId", nullable=false, length=64)
 	private String applicationId;
 
-	@Column(name="clientUuid", length=32)
+	@Column(name="clientUuid", length=64)
 	private String clientUuid;
 
-	@Column(nullable=false, length=32)
+	@Column(nullable=false, length=64)
 	private String token;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -128,7 +128,7 @@ public class NbTokenPublisher implements Serializable, nbBaseModel {
 		data.put("tokenCreated", tokenCreated);
 		data.put("tokenFreshed", tokenFreshed);
 		data.put("tokenLifecycleSec", tokenLifecycleSec);
-		return null;
+		return data;
 	}
 
 }

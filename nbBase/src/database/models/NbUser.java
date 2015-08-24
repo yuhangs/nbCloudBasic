@@ -28,6 +28,9 @@ public class NbUser implements Serializable, nbBaseModel {
 
 	@Column(length=32)
 	private String email;
+	
+	@Column(name="applicationId", nullable=false, length=64)
+	private String applicationId;
 
 	private Boolean emailVerified;
 
@@ -36,7 +39,7 @@ public class NbUser implements Serializable, nbBaseModel {
 
 	private Boolean mobilePhoneVerified;
 
-	@Column(nullable=false, length=32)
+	@Column(nullable=false, length=64)
 	private String password;
 
 	@Column(nullable=false, length=32)
@@ -126,6 +129,14 @@ public class NbUser implements Serializable, nbBaseModel {
 
 		return nbTokenPublisher;
 	}
+	
+	public String getApplicationId() {
+		return applicationId;
+	}
+
+	public void setApplicationId(String applicationId) {
+		this.applicationId = applicationId;
+	}
 
 	@Override
 	public Map<String, Object> modelToMap() {
@@ -136,6 +147,7 @@ public class NbUser implements Serializable, nbBaseModel {
 		data.put("mobilePhoneVerified", mobilePhoneVerified);
 		data.put("email", email);
 		data.put("emailVerified", emailVerified);
+		data.put("applicationId", applicationId);
 		return data;
 	}
 

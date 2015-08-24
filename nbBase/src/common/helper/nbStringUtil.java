@@ -1,12 +1,10 @@
 package common.helper;
 
-import java.security.MessageDigest;
-
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.util.DigestUtils;
 
 public class nbStringUtil {
 
-	private static final String KEY_MD5 = "MD5";
 	
 	/**
 	 * MD5加密
@@ -17,11 +15,8 @@ public class nbStringUtil {
 	 */
 
 	public static byte[] encryptMD5(byte[] data) throws Exception {
-		
-		MessageDigest md5 = MessageDigest.getInstance(KEY_MD5);
-		md5.update(data);
-		
-		return md5.digest();
+	
+		return DigestUtils.md5Digest(data);
 		
 	}
 	
@@ -36,26 +31,12 @@ public class nbStringUtil {
 	public static String encryptMD5(String text) throws Exception {
 		
 		byte[] data = text.getBytes();
-		MessageDigest md5 = MessageDigest.getInstance(KEY_MD5);
-		md5.update(data);
-		byte[] cryptedData = md5.digest();
-		String crypted = Base64.encodeBase64String(cryptedData);
+		String cryptedData = DigestUtils.md5DigestAsHex(data);
+		String crypted = Base64.encodeBase64String(cryptedData.getBytes());
 		
 		return crypted;
 	}
 	
-	private static String bytes2Hex(byte[] bts) {  
-        StringBuffer des = new StringBuffer();  
-        String tmp = null;  
-        for (int i = 0; i < bts.length; i++) {  
-            tmp = (Integer.toHexString(bts[i] & 0xFF));  
-            if (tmp.length() == 1) {  
-                des.append("0");  
-            }  
-            des.append(tmp);  
-        }  
-        return des.toString();  
-    }  
 	
 	/**
 	* BASE64解密

@@ -7,8 +7,8 @@ public class nbReturn {
 	private Object  object;
 	
 	public nbReturn(){
-		retString = nbReturnMessageEnum.ReturnString.SUCCESS;
-		retCode = nbReturnMessageEnum.ReturnCode.SUCCESS;
+		retString = nbRetEnum.ReturnString.SUCCESS;
+		retCode = nbRetEnum.ReturnCode.SUCCESS;
 		object = null;
 	}
 	

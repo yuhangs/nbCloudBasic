@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import common.helper.nbReturn;
-import common.helper.nbReturnMessageEnum;
+import common.helper.nbRetEnum;
+import common.helper.nbStringUtil;
 import service.common.ScheduledService;
 import database.basicFunctions.dao.TokenPublishDao;
 import database.basicFunctions.dao.UserInfoDao;
@@ -32,6 +33,18 @@ public class UserInfoServiceImpl implements UserInfoService{
 		return userInfo;
 	}
 
+	/**
+	 * 用于验证用户名及密码
+	 * 
+	 * @param username 用户名
+	 * 		  password 密码
+	 *        appID    商家ID
+	 *        clientUuid 终端的UUID，如果是web调用可填写IP地址，可为空，但是请谨慎使用
+	 *        lifecycleSec token的生命周期，不可小于60秒，不可大于14400秒
+	 *        needToken 是否需要生成token，如果是web页面生成可以不用生成token
+	 * @return 返回nbReturn类型的返回值。object为NbTokenPublish（如果needToken为true）
+	 * 
+	 */
 	@Override
 	public nbReturn verifyUser(String username, 
 			                   String password, 
@@ -41,14 +54,24 @@ public class UserInfoServiceImpl implements UserInfoService{
 			                   Boolean needToken) throws Exception {
 		
 		nbReturn nbRet = new nbReturn();
+		if( lifecycleSec == null ) lifecycleSec = 7200l;
+		if( lifecycleSec < 60l) lifecycleSec = 60l;
+		if( lifecycleSec > 14400l ) lifecycleSec = 14400l;
+		if( appID == null ) {
+			nbRet.setRetCode(nbRetEnum.ReturnCode.MISSING_APPID);
+			nbRet.setRetString(nbRetEnum.ReturnString.MISSING_APPID);
+			return nbRet;
+		}
+		if( clientUuid == null ) clientUuid = "none";
 		
-		NbUser nbUser = userInfoDao.verifyUser(username, password);
+		
+		NbUser nbUser = userInfoDao.verifyUser(username, nbStringUtil.encryptMD5(password), appID);
 		NbTokenPublisher nbTokenPublish;
 		
 		if( nbUser == null ){ //用户认证失败
 			
-			nbRet.setRetCode(nbReturnMessageEnum.ReturnCode.USERNAME_PASSWORD_ERROR);
-			nbRet.setRetString(nbReturnMessageEnum.ReturnString.USERNAME_PASSWORD_ERROR);
+			nbRet.setRetCode(nbRetEnum.ReturnCode.USERNAME_PASSWORD_ERROR);
+			nbRet.setRetString(nbRetEnum.ReturnString.USERNAME_PASSWORD_ERROR);
 			
 		}else{ //用户认证成功
 			
@@ -58,7 +81,7 @@ public class UserInfoServiceImpl implements UserInfoService{
 				
 				nbReturn nbTmpRet = tokenPublishDao.createNewToken(appID, nbUser, clientUuid, lifecycleSec);
 				
-				if( nbTmpRet.getRetCode() == nbReturnMessageEnum.ReturnCode.SUCCESS ){//创建成功
+				if( nbTmpRet.getRetCode() == nbRetEnum.ReturnCode.SUCCESS ){//创建成功
 					
 					nbTokenPublish = (NbTokenPublisher)nbTmpRet.getObject();
 					nbRet.setObject(nbTokenPublish);
@@ -66,8 +89,8 @@ public class UserInfoServiceImpl implements UserInfoService{
 				}
 				else{//创建失败了
 					
-					nbRet.setRetCode(nbReturnMessageEnum.ReturnCode.CREATE_TOKEN_ERROR);
-					nbRet.setRetString(nbReturnMessageEnum.ReturnString.CREATE_TOKEN_ERROR);
+					nbRet.setRetCode(nbRetEnum.ReturnCode.CREATE_TOKEN_ERROR);
+					nbRet.setRetString(nbRetEnum.ReturnString.CREATE_TOKEN_ERROR);
 					
 				}
 			}
@@ -86,8 +109,8 @@ public class UserInfoServiceImpl implements UserInfoService{
 		
 		//错误处理开始
 		if( nbTokenPublish == null ){//没有这个token
-			nbRet.setRetCode(nbReturnMessageEnum.ReturnCode.TOKEN_NOT_EXIST);
-			nbRet.setRetString(nbReturnMessageEnum.ReturnString.TOKEN_NOT_EXIST);
+			nbRet.setRetCode(nbRetEnum.ReturnCode.TOKEN_NOT_EXIST);
+			nbRet.setRetString(nbRetEnum.ReturnString.TOKEN_NOT_EXIST);
 			
 		}else{
 			
@@ -95,10 +118,10 @@ public class UserInfoServiceImpl implements UserInfoService{
 			Date currentDate = Calendar.getInstance().getTime();
 			Long milSec = currentDate.getTime() - toBeExpired.getTime();
 			
-			if( milSec > nbTokenPublish.getTokenLifecycleSec() ){ // expired
+			if( milSec > (nbTokenPublish.getTokenLifecycleSec()*1000) ){ // expired
 				
-				nbRet.setRetCode(nbReturnMessageEnum.ReturnCode.TOKEN_EXPIRED);
-				nbRet.setRetString(nbReturnMessageEnum.ReturnString.TOKEN_EXPIRED);
+				nbRet.setRetCode(nbRetEnum.ReturnCode.TOKEN_EXPIRED);
+				nbRet.setRetString(nbRetEnum.ReturnString.TOKEN_EXPIRED);
 				
 			}else{ // 有这个token，也没有过期
 				
@@ -113,6 +136,31 @@ public class UserInfoServiceImpl implements UserInfoService{
 			nbRet.setObject(nbTokenPublish);
 		}
 
+		return nbRet;
+	}
+
+	@Override
+	public nbReturn RegisterUser(String username, String password,
+			String mobile, String email, String appID) throws Exception {
+		
+		NbUser checkUser = userInfoDao.findByUsernameAndAppid(username, appID);
+		if( checkUser != null ){ //用户名已经存在
+			nbReturn nbRet = new nbReturn();
+			nbRet.setRetCode(nbRetEnum.ReturnCode.USERNAME_ALREADY_EXIST);
+			nbRet.setRetString(nbRetEnum.ReturnString.USERNAME_ALREADY_EXIST);
+			return nbRet;
+		}
+		//用户名可以用，开始注册用户
+		NbUser nbUser = new NbUser();
+		nbUser.setEmail(email);
+		nbUser.setMobilePhone(mobile);
+		nbUser.setPassword(nbStringUtil.encryptMD5(password));
+		nbUser.setUsername(username);
+		nbUser.setApplicationId(appID);
+		nbUser = userInfoDao.save(nbUser);
+		
+		nbReturn nbRet = new nbReturn();
+		nbRet.setObject(nbUser);
 		return nbRet;
 	}
 

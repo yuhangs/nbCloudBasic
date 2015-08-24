@@ -24,6 +24,14 @@ public class HttpWebIOHelper {
 		out.close();
 	}
 	
+	public void printStringOut(String theData, HttpServletResponse response) throws IOException{
+		response.setContentType("application/json;charset=UTF-8");
+		PrintWriter out = response.getWriter();
+		out.print(theData);
+		out.flush();
+		out.close();
+	}
+	
 	public String servletInputStream2String(HttpServletRequest request) throws IOException{
 		request.setCharacterEncoding("utf-8");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));

@@ -6,6 +6,7 @@ import database.models.NbUser;
 public interface UserInfoDao extends BaseDao<NbUser>{
 	
 	public NbUser getFirstUser();
-	public NbUser verifyUser(String username, String password);
+	public NbUser verifyUser(String username, String password, String AppId);
+	public NbUser findByUsernameAndAppid(String username, String appID);
 	
 }
