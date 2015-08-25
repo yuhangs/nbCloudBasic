@@ -25,13 +25,6 @@ public class UserInfoServiceImpl implements UserInfoService{
 	@Autowired
 	private TokenPublishDao tokenPublishDao;
 	
-	@Override
-	public NbUser getFirstUserInfo() {
-		
-		NbUser userInfo = userInfoDao.getFirstUser();
-		
-		return userInfo;
-	}
 
 	/**
 	 * 用于验证用户名及密码
@@ -157,8 +150,12 @@ public class UserInfoServiceImpl implements UserInfoService{
 		nbUser.setPassword(nbStringUtil.encryptMD5(password));
 		nbUser.setUsername(username);
 		nbUser.setApplicationId(appID);
+		Calendar cal = Calendar.getInstance();
+		nbUser.setUserOpenCode(nbStringUtil.encryptMD5(	appID
+														+username
+														+String.valueOf(cal.getTimeInMillis())
+														));
 		nbUser = userInfoDao.save(nbUser);
-		
 		nbReturn nbRet = new nbReturn();
 		nbRet.setObject(nbUser);
 		return nbRet;

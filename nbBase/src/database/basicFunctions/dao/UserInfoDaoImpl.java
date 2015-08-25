@@ -12,16 +12,6 @@ import database.models.NbUser;
 @Repository("userInfoDao")
 public class UserInfoDaoImpl extends BaseDaoImpl<NbUser> implements UserInfoDao{
 
-	@Override
-	public NbUser getFirstUser() {
-		
-		NbUser newone = new NbUser();
-		newone.setUsername("secondUser");
-		newone.setPassword("secondPassword");
-		newone = this.save(newone);
-		
-		return this.findAll().get(0);
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override

@@ -31,8 +31,6 @@ public class WebAppMain {
     	Map<String,Object> data = new HashMap<String,Object>();  
         data.put("helloWorld","helloWorld");
         
-        NbUser userInfo = userInfoService.getFirstUserInfo();
-        data.put("userInfoMap", userInfo.modelToMap() );
 
         Boolean needToken = true;
         nbReturn verifyResult = userInfoService.verifyUser("firstUser", 

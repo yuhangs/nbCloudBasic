@@ -36,6 +36,9 @@ public class NbUser implements Serializable, nbBaseModel {
 
 	@Column(length=32)
 	private String mobilePhone;
+	
+	@Column(length=64)
+	private String userOpenCode;
 
 	private Boolean mobilePhoneVerified;
 
@@ -138,6 +141,14 @@ public class NbUser implements Serializable, nbBaseModel {
 		this.applicationId = applicationId;
 	}
 
+	public String getUserOpenCode() {
+		return userOpenCode;
+	}
+
+	public void setUserOpenCode(String userOpenCode) {
+		this.userOpenCode = userOpenCode;
+	}
+
 	@Override
 	public Map<String, Object> modelToMap() {
 		Map<String, Object> data = new HashMap<String, Object>();
@@ -148,6 +159,7 @@ public class NbUser implements Serializable, nbBaseModel {
 		data.put("email", email);
 		data.put("emailVerified", emailVerified);
 		data.put("applicationId", applicationId);
+		data.put("userOpenCode", userOpenCode);
 		return data;
 	}
 
