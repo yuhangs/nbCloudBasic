@@ -8,19 +8,24 @@ import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import service.basicFunctions.UserInfoService;
 
 public class nbAPISecurityFilter implements Filter{
 
 	private List<String> excludedPages = new ArrayList<String>();
 	
-	@Autowired
-	ApplicationContextProvider appContextProvider;
+	private ServletContext  servletContext;
 	
 	@Override
 	public void destroy() {
@@ -36,8 +41,12 @@ public class nbAPISecurityFilter implements Filter{
 		Map<String, String[]> getParameter = request.getParameterMap();
 		
 		String tokenKey = null;
+		String appID = null;
 		if( getParameter.get("token") != null )
 			tokenKey = getParameter.get("token")[0];
+		if( getParameter.get("appID") != null )
+			appID = getParameter.get("appID")[0];
+		
 		
 		String servletPath = httpServletRequest.getServletPath();
 		
@@ -51,11 +60,24 @@ public class nbAPISecurityFilter implements Filter{
 		
 		//需要拦截的
 		if( !isExcludedPath ){
+			nbReturn tmpRet = new nbReturn();
 			
-			Boolean isAuthorized = false;
-			//verifyToken(tokenKey);
-			
-			// TODO Auto-generated method stub
+			if( tokenKey == null || appID == null ){
+				tmpRet.setError(nbReturn.ReturnCode.NEED_TOKEN_APPID_FOR_AUTH);
+				HttpWebIOHelper.printReturnJson(tmpRet, (HttpServletResponse) response);
+				return;
+			}
+
+			WebApplicationContext context =  WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
+	        UserInfoService userInfoService = (UserInfoService)context.getBean("userInfoService");
+	        
+			nbReturn nbRet = userInfoService.checkToken(tokenKey, appID, true);
+			if( !nbRet.isSuccess() ){
+				
+				tmpRet.setError(nbReturn.ReturnCode.AUTHORIZE_FAILED);
+				HttpWebIOHelper.printReturnJson(tmpRet, (HttpServletResponse) response);
+				return;
+			}
 	
 		}
 		
@@ -71,5 +93,7 @@ public class nbAPISecurityFilter implements Filter{
 		for(int i = 0 ; i < excludedPageArray.length ; i++){
 			excludedPages.add(excludedPageArray[i].trim());
 		}
+		
+		servletContext =filterConfig.getServletContext();
 	}
 }

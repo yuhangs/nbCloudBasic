@@ -1,42 +1,57 @@
 package main.entry.api;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import service.basicFunctions.UserInfoService;
 import common.helper.HttpWebIOHelper;
+import common.helper.nbReturn;
+
 
 @Controller
 public class APIMain {
 
-	private HttpWebIOHelper httpWebIOHelper = new HttpWebIOHelper();
+	//private HttpWebIOHelper httpWebIOHelper = new HttpWebIOHelper();
+	
+	@Autowired  
+	private UserInfoService userInfoService;
     
-    @RequestMapping(value = "/nbapi/apisampleJSON") 
-    public void indexJSON(HttpServletResponse response,HttpServletRequest request) throws IOException{
+    @RequestMapping(value = "/nbapi/registerUser") 
+    public void registerNewUser(HttpServletResponse response,HttpServletRequest request) throws Exception{
     	
-		Map<String, Object> jsonMap = httpWebIOHelper.servletInputStream2JsonMap(request);
-		if( jsonMap != null){
-			String password = (String) jsonMap.get("password");
-			System.out.println(password);
-		}
+		Map<String, Object> jsonMap = HttpWebIOHelper.servletInputStream2JsonMap(request);
+		nbReturn nbRet = new nbReturn();
 		
-        //创建模型跟视图，用于渲染页面。并且指定要返回的页面为home页面  
-    	Map<String, Object> theData = new HashMap<String, Object>();
-    	List<String> subData = new ArrayList<String>();
-    	subData.add("data1");
-    	subData.add("data2");
-    	theData.put("name", "helloWord");
-    	theData.put("value", "helloValue");
-    	theData.put("subData", subData);
-    	httpWebIOHelper.printWebJson(theData, response);
+		if( jsonMap != null){
+			String username = (String) jsonMap.get("username");
+			String password = (String) jsonMap.get("password");
+			String mobile = (String) jsonMap.get("mobilePhone");
+			String email = (String) jsonMap.get("email");
+			String appID = (String) jsonMap.get("appID");
+			String appSignature = (String) jsonMap.get("appSignature");
+			String applyDateTime = (String) jsonMap.get("applyDateTime");
+			
+			//TODO:这里需要通过applyDateTime, appSignature 以及 appID 验证APPID的有效性
+			
+			
+			nbRet = userInfoService.RegisterUser(username, 
+												 password, 
+												 mobile,
+												 email,
+												 appID);
+			
+		}else{
+			nbRet.setError(nbReturn.ReturnCode.PARAMETER_PHARSE_ERROR);
+			
+		}
+
+		HttpWebIOHelper.printReturnJson(nbRet, response);
     }
 
 }

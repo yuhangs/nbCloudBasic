@@ -10,7 +10,7 @@ public class CommonHelper {
 	 * 
 	 * @return
 	 */
-	public String getStringOfObj(Object obj) {
+	public static String getStringOfObj(Object obj) {
 		//SimplePropertyFilter spf = new SimplePropertyFilter();
 		//暂时不考虑持JPA对象报错的问题。以后可能需要加上
 		

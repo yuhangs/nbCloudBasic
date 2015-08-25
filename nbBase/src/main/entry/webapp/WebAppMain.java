@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import common.helper.nbRetEnum;
 import common.helper.nbReturn;
 import common.helper.nbStringUtil;
 import service.basicFunctions.UserInfoService;
@@ -40,7 +39,7 @@ public class WebAppMain {
         		                                          null,
         		                                          true);
         
-        if( verifyResult.getRetCode().equals(nbRetEnum.ReturnCode.SUCCESS) ){
+        if( verifyResult.isSuccess() ){
         	if( needToken){
         		data.put("verifyRet", ((NbTokenPublisher)(verifyResult.getObject())).modelToMap() );
         	}else{

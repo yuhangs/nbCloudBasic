@@ -15,10 +15,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import service.basicFunctions.UserInfoService;
 import common.helper.HttpWebIOHelper;
-import common.helper.nbRetEnum;
 import common.helper.nbReturn;
 import common.helper.nbStringUtil;
-import database.models.NbTokenPublisher;
 import database.models.NbUser;
 
 @Controller
@@ -35,7 +33,7 @@ public class ManualTest {
 				             								"testAppId", 
 				             								true);
 		
-		if( verifyResult.getRetCode().equals(nbRetEnum.ReturnCode.SUCCESS) ){
+		if( verifyResult.isSuccess()){
 			
 		}else{
 			data.put("verifyRet", verifyResult.getRetString() );
@@ -50,7 +48,7 @@ public class ManualTest {
 		Map<String,Object> data = new HashMap<String,Object>();
 		nbReturn verifyResult = userInfoService.RegisterUser("syh", "123456", null, null, "syhAppID");
 		
-		if( verifyResult.getRetCode().equals(nbRetEnum.ReturnCode.SUCCESS) ){
+		if( verifyResult.isSuccess() ){
 			data.put("verifyRet", ((NbUser)(verifyResult.getObject())).modelToMap());
 		}else{
 			data.put("verifyRet", verifyResult.getRetString() );
@@ -63,7 +61,6 @@ public class ManualTest {
 	@RequestMapping(value = "/testVerifyUser") 
 	public void testVerifyUser(HttpServletResponse response,HttpServletRequest request) throws Exception{  
        //创建模型跟视图，用于渲染页面。并且指定要返回的页面为home页面  
-		Map<String,Object> data = new HashMap<String,Object>();  
 
 		Boolean needToken = true;
 		nbReturn verifyResult = userInfoService.verifyUser("syh", 
@@ -71,19 +68,18 @@ public class ManualTest {
        												       "syhAppID",
        												       "localhost_test",
        												       null,
-       												       true);
-		if( verifyResult.getRetCode().equals(nbRetEnum.ReturnCode.SUCCESS) ){
-			if( needToken){
-				data.put("verifyRet", ((NbTokenPublisher)(verifyResult.getObject())).modelToMap() );
-			}else{
-				data.put("verifyRet", ((NbUser)(verifyResult.getObject())).modelToMap() );
-			}
-		}else{
-			data.put("verifyRet", verifyResult.getRetString() );
-		}
+       												       needToken);
+//		if( verifyResult.isSuccess() ){
+//			if( needToken){
+//				data.put("verifyRet", ((NbTokenPublisher)(verifyResult.getObject())).modelToMap() );
+//			}else{
+//				data.put("verifyRet", ((NbUser)(verifyResult.getObject())).modelToMap() );
+//			}
+//		}else{
+//			data.put("verifyRet", verifyResult.getRetString() );
+//		}
 		
-		HttpWebIOHelper httpWebIOHelper = new  HttpWebIOHelper();
-		httpWebIOHelper.printWebJson(data, response);
+		HttpWebIOHelper.printReturnJson(verifyResult, response);
 	}
 	
 	@RequestMapping(value = "/testMD5") 

@@ -1,7 +1,6 @@
 package service.basicFunctions;
 
 import common.helper.nbReturn;
-import database.models.NbUser;
 
 
 public interface UserInfoService {//extends ScheduledTaskInterface{
