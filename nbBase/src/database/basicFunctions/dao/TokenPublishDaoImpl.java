@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import common.helper.nbReturn;
 import common.helper.nbStringUtil;
@@ -16,7 +16,7 @@ import database.common.BaseDaoImpl;
 import database.models.NbTokenPublisher;
 import database.models.NbUser;
 
-@Service("tokenPublishDao")
+@Repository("tokenPublishDao")
 public class TokenPublishDaoImpl  extends BaseDaoImpl<NbTokenPublisher> implements TokenPublishDao{
 
 	@SuppressWarnings("unchecked")

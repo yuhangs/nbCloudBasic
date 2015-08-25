@@ -1,5 +1,9 @@
 package common.helper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.util.DigestUtils;
 
@@ -58,6 +62,17 @@ public class nbStringUtil {
 	*/
 	public static String encryptBASE64(byte[] key) throws Exception {
 		return Base64.encodeBase64String(key);
+	}
+	
+	public static String DateTime2String(Date theDate){
+		SimpleDateFormat sf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return sf2.format(theDate);
+	}
+	
+	public static Date String2DateTime(String dateString) throws ParseException{
+		
+		SimpleDateFormat sf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return sf2.parse(dateString);
 	}
 	
 }

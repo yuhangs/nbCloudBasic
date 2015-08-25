@@ -30,7 +30,7 @@
 	    <init-param>    
 			<param-name>excludedPages</param-name>    
 			<param-value>
-				/pathtobeexcluded/;
+				/openAPI/;
 			</param-value>    
 		</init-param>
 	</filter>

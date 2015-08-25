@@ -3,6 +3,7 @@ package common.helper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.web.context.WebApplicationContext;
 
 public class ApplicationContextProvider implements ApplicationContextAware {
 
@@ -20,6 +21,10 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 	
 	public static ApplicationContext getApplicationContext() {
 		return ctx;
+	}
+	
+	public static Object getBeanByName(String beanID){
+		return getApplicationContext().getBean(beanID);
 	}
 
 }

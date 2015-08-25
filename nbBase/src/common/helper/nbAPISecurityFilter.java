@@ -25,7 +25,7 @@ public class nbAPISecurityFilter implements Filter{
 
 	private List<String> excludedPages = new ArrayList<String>();
 	
-	private ServletContext  servletContext;
+	WebApplicationContext springContext;
 	
 	@Override
 	public void destroy() {
@@ -40,6 +40,7 @@ public class nbAPISecurityFilter implements Filter{
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		Map<String, String[]> getParameter = request.getParameterMap();
 		
+		
 		String tokenKey = null;
 		String appID = null;
 		if( getParameter.get("token") != null )
@@ -51,6 +52,8 @@ public class nbAPISecurityFilter implements Filter{
 		String servletPath = httpServletRequest.getServletPath();
 		
 		for( String excludePath : excludedPages){
+			
+			//设计上应该是/openAPI/路径下的所有的api都是不需要登录访问的，详细的参看web.xml中的配置
 			if( servletPath.startsWith(excludePath) ){
 				isExcludedPath = true;
 			}
@@ -60,27 +63,27 @@ public class nbAPISecurityFilter implements Filter{
 		
 		//需要拦截的
 		if( !isExcludedPath ){
-			nbReturn tmpRet = new nbReturn();
+			nbReturn nbRet = new nbReturn();
 			
 			if( tokenKey == null || appID == null ){
-				tmpRet.setError(nbReturn.ReturnCode.NEED_TOKEN_APPID_FOR_AUTH);
-				HttpWebIOHelper.printReturnJson(tmpRet, (HttpServletResponse) response);
+				//需要验证token, tokenKey appID都不为空
+				nbRet.setError(nbReturn.ReturnCode.NEED_TOKEN_APPID_FOR_AUTH);
+				HttpWebIOHelper.printReturnJson(nbRet, (HttpServletResponse) response);
 				return;
 			}
-
-			WebApplicationContext context =  WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
-	        UserInfoService userInfoService = (UserInfoService)context.getBean("userInfoService");
-	        
-			nbReturn nbRet = userInfoService.checkToken(tokenKey, appID, true);
+			
+			//开始验证token
+			UserInfoService userInfoService  = 
+					(UserInfoService)ApplicationContextProvider.getBeanByName("userInfoService");
+			nbRet = userInfoService.checkToken(tokenKey, appID, true);
 			if( !nbRet.isSuccess() ){
-				
-				tmpRet.setError(nbReturn.ReturnCode.AUTHORIZE_FAILED);
-				HttpWebIOHelper.printReturnJson(tmpRet, (HttpServletResponse) response);
+				//验证token失败
+				HttpWebIOHelper.printReturnJson(nbRet, (HttpServletResponse) response);
 				return;
 			}
 	
 		}
-		
+		//验证token成功
 		chain.doFilter(request, response);
 		
 	}
@@ -93,7 +96,7 @@ public class nbAPISecurityFilter implements Filter{
 		for(int i = 0 ; i < excludedPageArray.length ; i++){
 			excludedPages.add(excludedPageArray[i].trim());
 		}
-		
-		servletContext =filterConfig.getServletContext();
+		springContext = 
+		        WebApplicationContextUtils.getWebApplicationContext(filterConfig.getServletContext());
 	}
 }
