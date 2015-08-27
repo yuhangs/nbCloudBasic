@@ -18,32 +18,31 @@ import java.util.Map;
 @Entity
 @Table(name="nb_token_publisher")
 @NamedQuery(name="NbTokenPublisher.findAll", query="SELECT n FROM NbTokenPublisher n")
-public class NbTokenPublisher implements Serializable, nbBaseModel {
+public class NbTokenPublisher implements Serializable, nbBaseModel  {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(unique=true, nullable=false)
-	private int id;
+	private Long id;
 
-	@Column(name="applicationId", nullable=false, length=64)
+	@Column(nullable=false, length=64)
 	private String applicationId;
 
-	@Column(name="clientUuid", length=64)
+	@Column(length=64)
 	private String clientUuid;
 
 	@Column(nullable=false, length=64)
 	private String token;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="tokenCreated", nullable=false)
+	@Column(nullable=false)
 	private Date tokenCreated;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="tokenFreshed")
 	private Date tokenFreshed;
 
-	@Column(name="tokenLifecycleSec", nullable=false)
+	@Column(nullable=false)
 	private Long tokenLifecycleSec;
 
 	//bi-directional many-to-one association to NbUser
@@ -54,11 +53,11 @@ public class NbTokenPublisher implements Serializable, nbBaseModel {
 	public NbTokenPublisher() {
 	}
 
-	public int getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

@@ -18,27 +18,21 @@ import java.util.Map;
 @Entity
 @Table(name="nb_user")
 @NamedQuery(name="NbUser.findAll", query="SELECT n FROM NbUser n")
-public class NbUser implements Serializable, nbBaseModel {
+public class NbUser implements Serializable, nbBaseModel  {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(unique=true, nullable=false)
-	private int id;
+	private Long id;
 
 	@Column(length=32)
 	private String email;
-	
-	@Column(name="applicationId", nullable=false, length=64)
-	private String applicationId;
 
 	private Boolean emailVerified;
 
 	@Column(length=32)
 	private String mobilePhone;
-	
-	@Column(length=64)
-	private String userOpenCode;
 
 	private Boolean mobilePhoneVerified;
 
@@ -48,18 +42,28 @@ public class NbUser implements Serializable, nbBaseModel {
 	@Column(nullable=false, length=32)
 	private String username;
 
+	@Column(nullable=false, length=64)
+	private String userOpenCode;
+	
+	@Column(nullable=false, length=64)
+	private String applicationId;
+
 	//bi-directional many-to-one association to NbTokenPublisher
 	@OneToMany(mappedBy="nbUser")
 	private List<NbTokenPublisher> nbTokenPublishers;
 
+	//bi-directional many-to-one association to NbUserExtraAttibute
+	@OneToMany(mappedBy="nbUser")
+	private List<NbUserExtraAttibute> nbUserExtraAttibutes;
+
 	public NbUser() {
 	}
 
-	public int getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -111,6 +115,14 @@ public class NbUser implements Serializable, nbBaseModel {
 		this.username = username;
 	}
 
+	public String getUserOpenCode() {
+		return this.userOpenCode;
+	}
+
+	public void setUserOpenCode(String userOpenCode) {
+		this.userOpenCode = userOpenCode;
+	}
+
 	public List<NbTokenPublisher> getNbTokenPublishers() {
 		return this.nbTokenPublishers;
 	}
@@ -132,21 +144,35 @@ public class NbUser implements Serializable, nbBaseModel {
 
 		return nbTokenPublisher;
 	}
-	
+
+	public List<NbUserExtraAttibute> getNbUserExtraAttibutes() {
+		return this.nbUserExtraAttibutes;
+	}
+
+	public void setNbUserExtraAttibutes(List<NbUserExtraAttibute> nbUserExtraAttibutes) {
+		this.nbUserExtraAttibutes = nbUserExtraAttibutes;
+	}
+
+	public NbUserExtraAttibute addNbUserExtraAttibute(NbUserExtraAttibute nbUserExtraAttibute) {
+		getNbUserExtraAttibutes().add(nbUserExtraAttibute);
+		nbUserExtraAttibute.setNbUser(this);
+
+		return nbUserExtraAttibute;
+	}
+
+	public NbUserExtraAttibute removeNbUserExtraAttibute(NbUserExtraAttibute nbUserExtraAttibute) {
+		getNbUserExtraAttibutes().remove(nbUserExtraAttibute);
+		nbUserExtraAttibute.setNbUser(null);
+
+		return nbUserExtraAttibute;
+	}
+
 	public String getApplicationId() {
 		return applicationId;
 	}
 
 	public void setApplicationId(String applicationId) {
 		this.applicationId = applicationId;
-	}
-
-	public String getUserOpenCode() {
-		return userOpenCode;
-	}
-
-	public void setUserOpenCode(String userOpenCode) {
-		this.userOpenCode = userOpenCode;
 	}
 
 	@Override

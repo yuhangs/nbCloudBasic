@@ -15,18 +15,21 @@ import database.common.nbBaseModel;
  */
 @Entity
 @Table(name="nb_applications")
-@NamedQuery(name="NbApplication.findAll", query="SELECT n FROM NbApplications n")
+@NamedQuery(name="NbApplications.findAll", query="SELECT n FROM NbApplications n")
 public class NbApplications implements Serializable, nbBaseModel {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(unique=true, nullable=false, length=64)
-	private String applicationID;
+	@Column(unique=true, nullable=false)
+	private Long id;
 
 	@Lob
 	@Column(nullable=false)
 	private String applicationDes;
+
+	@Column(nullable=false, length=64, unique=true)
+	private String applicationID;
 
 	@Column(nullable=false, length=64)
 	private String secretKey;
@@ -34,12 +37,12 @@ public class NbApplications implements Serializable, nbBaseModel {
 	public NbApplications() {
 	}
 
-	public String getApplicationID() {
-		return this.applicationID;
+	public Long getId() {
+		return this.id;
 	}
 
-	public void setApplicationID(String applicationID) {
-		this.applicationID = applicationID;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getApplicationDes() {
@@ -48,6 +51,14 @@ public class NbApplications implements Serializable, nbBaseModel {
 
 	public void setApplicationDes(String applicationDes) {
 		this.applicationDes = applicationDes;
+	}
+
+	public String getApplicationID() {
+		return this.applicationID;
+	}
+
+	public void setApplicationID(String applicationID) {
+		this.applicationID = applicationID;
 	}
 
 	public String getSecretKey() {
@@ -61,6 +72,7 @@ public class NbApplications implements Serializable, nbBaseModel {
 	@Override
 	public Map<String, Object> modelToMap() {
 		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("id", id);
 		data.put("applicationID", applicationID);
 		data.put("secretKey", secretKey);
 		data.put("applicationDes", applicationDes);
