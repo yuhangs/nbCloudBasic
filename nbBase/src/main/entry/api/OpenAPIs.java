@@ -1,6 +1,5 @@
 package main.entry.api;
 
-import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,13 +10,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import service.basicFunctions.ApplicationsService;
+import service.basicFunctions.OperationFlags;
 import service.basicFunctions.UserInfoService;
 import common.helper.HttpWebIOHelper;
 import common.helper.nbReturn;
 
 
 @Controller
-public class APIMain {
+public class OpenAPIs {
 
 	//private HttpWebIOHelper httpWebIOHelper = new HttpWebIOHelper();
 	
@@ -103,4 +103,59 @@ public class APIMain {
 		
 		HttpWebIOHelper.printReturnJson(nbRet, response);
     }
+    
+    @RequestMapping(value = "/openAPI/addConfigExtraUserAttribute") 
+    public void addExtraUserAttribute(HttpServletResponse response,HttpServletRequest request) throws Exception{
+    	configExtraUserAttibute(response, request, OperationFlags.USER_EXTRA_ATTRIBUTE_CONFIG_ADD);
+    }
+    
+    @RequestMapping(value = "/openAPI/removeConfigExtraUserAttribute") 
+    public void removeExtraUserAttribute(HttpServletResponse response,HttpServletRequest request) throws Exception{
+    	configExtraUserAttibute(response, request, OperationFlags.USER_EXTRA_ATTRIBUTE_CONFIG_REMOVE);
+    }
+    
+    @RequestMapping(value = "/openAPI/updateConfigExtraUserAttribute") 
+    public void updateExtraUserAttribute(HttpServletResponse response,HttpServletRequest request) throws Exception{
+    	configExtraUserAttibute(response, request, OperationFlags.USER_EXTRA_ATTRIBUTE_CONFIG_UPDATE);
+    }
+    
+    
+    
+    public void configExtraUserAttibute(HttpServletResponse response,HttpServletRequest request, OperationFlags opFlag) throws Exception{
+    	
+    	Map<String, Object> jsonMap = HttpWebIOHelper.servletInputStream2JsonMap(request);
+		nbReturn nbRet = new nbReturn();
+		
+		if( jsonMap != null){
+			String attributeCode = (String) jsonMap.get("attCode");
+			String attributeName = (String) jsonMap.get("attName");
+			String attributeDescription = (String) jsonMap.get("attDes");
+			String appID = (String) jsonMap.get("appId");
+			String appSignature = (String) jsonMap.get("appSignature");
+			String applyDateTime = (String) jsonMap.get("applyDateTime");
+			
+			//这里需要通过applyDateTime, appSignature 以及 appID 验证APPID的有效性
+			nbRet = applicationsService.checkSignature(appID, applyDateTime, appSignature);
+			
+			if( !nbRet.isSuccess() ){
+				//验证signature 失败了
+				HttpWebIOHelper.printReturnJson(nbRet, response);
+				return;
+			}
+			
+			//验证signature成功，开始验证用户
+			nbRet = userInfoService.configUserExtraAttributes( appID,
+															   attributeCode,
+															   attributeName,
+															   attributeDescription,
+															   opFlag);
+			
+		}else{
+			nbRet.setError(nbReturn.ReturnCode.PARAMETER_PHARSE_ERROR);
+		}
+		
+		HttpWebIOHelper.printReturnJson(nbRet, response);
+    }
+    
+    
 }

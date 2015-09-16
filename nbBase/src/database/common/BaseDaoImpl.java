@@ -27,9 +27,10 @@ import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 
-
+import common.helper.ApplicationContextProvider;
 import common.helper.ReflectUtil;
 import common.helper.StringUtil;
+import common.helper.nbTransactionInterceptor;
 
 @Transactional
 public class BaseDaoImpl<T> implements BaseDao<T> {
@@ -39,6 +40,8 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
 
 	@PersistenceContext
 	protected EntityManager em;
+	
+	nbTransactionInterceptor ti = (nbTransactionInterceptor)ApplicationContextProvider.getBeanByName("nbTransactionInterceptor");
 	
 //	@Autowired
 //	private SessionFactory sessionFactory;

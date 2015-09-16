@@ -52,10 +52,6 @@ public class NbUser implements Serializable, nbBaseModel  {
 	@OneToMany(mappedBy="nbUser")
 	private List<NbTokenPublisher> nbTokenPublishers;
 
-	//bi-directional many-to-one association to NbUserExtraAttibute
-	@OneToMany(mappedBy="nbUser")
-	private List<NbUserExtraAttibute> nbUserExtraAttibutes;
-
 	public NbUser() {
 	}
 
@@ -143,28 +139,6 @@ public class NbUser implements Serializable, nbBaseModel  {
 		nbTokenPublisher.setNbUser(null);
 
 		return nbTokenPublisher;
-	}
-
-	public List<NbUserExtraAttibute> getNbUserExtraAttibutes() {
-		return this.nbUserExtraAttibutes;
-	}
-
-	public void setNbUserExtraAttibutes(List<NbUserExtraAttibute> nbUserExtraAttibutes) {
-		this.nbUserExtraAttibutes = nbUserExtraAttibutes;
-	}
-
-	public NbUserExtraAttibute addNbUserExtraAttibute(NbUserExtraAttibute nbUserExtraAttibute) {
-		getNbUserExtraAttibutes().add(nbUserExtraAttibute);
-		nbUserExtraAttibute.setNbUser(this);
-
-		return nbUserExtraAttibute;
-	}
-
-	public NbUserExtraAttibute removeNbUserExtraAttibute(NbUserExtraAttibute nbUserExtraAttibute) {
-		getNbUserExtraAttibutes().remove(nbUserExtraAttibute);
-		nbUserExtraAttibute.setNbUser(null);
-
-		return nbUserExtraAttibute;
 	}
 
 	public String getApplicationId() {

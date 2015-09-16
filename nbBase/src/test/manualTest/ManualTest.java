@@ -93,4 +93,17 @@ public class ManualTest {
 			ModelAndView mav = new ModelAndView("home",data);
 			return mav;  
 		}
+	
+	@RequestMapping(value = "/testJsonOutput") 
+	public void jsonOutput(HttpServletResponse response,HttpServletRequest request) throws Exception{  
+		
+		nbReturn ret = new nbReturn();
+		Map<String, Object> test = new HashMap<String, Object>();
+		String output = "asdf";
+		test.put("1", output);
+		test.put("2", output);
+		ret.setObject(test);
+		
+		HttpWebIOHelper.printReturnJson(ret, response);
+		}
 }

@@ -16,6 +16,9 @@ public class nbReturn {
 		public static final Long NEED_TOKEN_APPID_FOR_AUTH = 				9l;
 		public static final Long APPLICATION_ID_NOT_FOUND = 				10l;
 		public static final Long SIGNATURE_WRONG = 							11l;
+		public static final Long ATTIBUTE_CODE_ALREADY_EXIST = 				12l;
+		public static final Long ATTIBUTE_CODE_NOT_EXIST = 					13l;
+		public static final Long INSUFFICIENT_PARAMTERS = 					14l;
 		
 	}
 	
@@ -32,6 +35,9 @@ public class nbReturn {
 	   ,"Please use ‘token’ and ‘appID’ for authorizing"			//NEED_TOKEN_APPID_FOR_AUTH = 9l;
 	   ,"ApplicationID not found!"									//APPLICATION_ID_NOT_FOUND = 10l;
 	   ,"Signature is not correct!"									//SIGNATURE_WRONG = 11l;
+	   ,"Attribute code to be added already exist!"					//ATTIBUTE_CODE_ALREADY_EXIST = 12l;
+	   ,"Attribute code does not exist!"							//ATTIBUTE_CODE_NOT_EXIST = 13l;
+	   ,"Paramter is not enough!"									//INSUFFICIENT_PARAMTERS = 14l;
 	};
 	
 	public void setError(Long errorCode){

@@ -32,6 +32,7 @@ public class UserInfoDaoImpl extends BaseDaoImpl<NbUser> implements UserInfoDao{
 			if( resultList.size() > 0 )
 				return resultList.get(0);
 		}
+		
 		return null;
 		
 	}

@@ -23,6 +23,8 @@ public class UserInfoServiceImpl implements UserInfoService{
 	private ScheduledService scheduledService;
 	@Autowired
 	private TokenPublishDao tokenPublishDao;
+//	@Autowired
+//	private UserExtraAttConfigDao userExtraAttConfigDao;
 	
 
 	/**
@@ -146,6 +148,76 @@ public class UserInfoServiceImpl implements UserInfoService{
 		nbUser = userInfoDao.save(nbUser);
 		nbReturn nbRet = new nbReturn();
 		nbRet.setObject(nbUser);
+		return nbRet;
+	}
+
+	@Override
+	public nbReturn configUserExtraAttributes(	String appID,
+												String attributeCode, 
+												String attributeName,
+												String attributeDescription,
+												OperationFlags operationFlag) {
+		nbReturn nbRet = new nbReturn();
+		
+		if( appID == null || attributeCode == null){
+			nbRet.setError(nbReturn.ReturnCode.INSUFFICIENT_PARAMTERS);
+			return nbRet;
+		}
+		
+		
+//		NbUserExtraAttributesConfig  nbUserExtraUserAttsConfig = userExtraAttConfigDao.findByAppIDAndAttributeCode(appID, attributeCode);
+//		
+//		//添加
+//		if( operationFlag.equals(OperationFlags.USER_EXTRA_ATTRIBUTE_CONFIG_ADD ) ){
+//			
+//			if( nbUserExtraUserAttsConfig != null ){//数据库里找到了
+//			//如果是ADD操作，但是CODE已经存在了
+//			nbRet.setError(nbReturn.ReturnCode.ATTIBUTE_CODE_ALREADY_EXIST);
+//			}
+//			else{
+//				//添加一个attribute
+//				nbUserExtraUserAttsConfig = new NbUserExtraAttributesConfig();
+//				nbUserExtraUserAttsConfig.setApplicationId(appID);
+//				nbUserExtraUserAttsConfig.setAttributeCode(attributeCode);
+//				nbUserExtraUserAttsConfig.setAttributeDes(attributeDescription);
+//				nbUserExtraUserAttsConfig.setAttributeName(attributeName);
+//				nbUserExtraUserAttsConfig = userExtraAttConfigDao.save(nbUserExtraUserAttsConfig);
+//				nbRet.setObject(nbUserExtraUserAttsConfig);
+//			}
+//		}
+//		
+//		//删除
+//		if( operationFlag.equals(OperationFlags.USER_EXTRA_ATTRIBUTE_CONFIG_REMOVE ) ){
+//			
+//			if( nbUserExtraUserAttsConfig == null ){//数据库里没找到了
+//				//如果是remove 或者 update操作，但是code却没有找到
+//				nbRet.setError(nbReturn.ReturnCode.ATTIBUTE_CODE_NOT_EXIST);
+//			}
+//			else{
+//				//删除一个attribute
+//				userExtraAttConfigDao.delete(nbUserExtraUserAttsConfig);
+//				nbRet.setObject(null);
+//			}
+//		}
+//		
+//		//更新
+//		if( operationFlag.equals(OperationFlags.USER_EXTRA_ATTRIBUTE_CONFIG_UPDATE ) ){
+//			
+//			if( nbUserExtraUserAttsConfig == null ){//数据库里没找到了
+//				//如果是remove 或者 update操作，但是code却没有找到
+//				nbRet.setError(nbReturn.ReturnCode.ATTIBUTE_CODE_NOT_EXIST);
+//			}
+//			else{
+//				//更新一个attribute
+//				nbUserExtraUserAttsConfig.setApplicationId(appID);
+//				nbUserExtraUserAttsConfig.setAttributeCode(attributeCode);
+//				nbUserExtraUserAttsConfig.setAttributeDes(attributeDescription);
+//				nbUserExtraUserAttsConfig.setAttributeName(attributeName);
+//				nbUserExtraUserAttsConfig = userExtraAttConfigDao.update(nbUserExtraUserAttsConfig);
+//				nbRet.setObject(nbUserExtraUserAttsConfig);
+//			}
+//		}
+		
 		return nbRet;
 	}
 

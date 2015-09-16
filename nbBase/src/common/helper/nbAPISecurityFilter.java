@@ -8,17 +8,16 @@ import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import database.models.NbTokenPublisher;
 import service.basicFunctions.UserInfoService;
 
 public class nbAPISecurityFilter implements Filter{
@@ -81,7 +80,7 @@ public class nbAPISecurityFilter implements Filter{
 				HttpWebIOHelper.printReturnJson(nbRet, (HttpServletResponse) response);
 				return;
 			}
-	
+			request.setAttribute("filterGetTokenPublisher", (NbTokenPublisher)nbRet.getObject());
 		}
 		//验证token成功
 		chain.doFilter(request, response);
